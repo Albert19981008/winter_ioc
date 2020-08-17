@@ -76,13 +76,13 @@ public class WinterContext implements BeanFactory {
         Class<?> clazz = detail.beanClazz;
         try {
             Object instance = clazz.newInstance();
+            if (detail.beanScope == BeanScope.SINGLETON) {
+                beans.put(clazz.getCanonicalName(), instance);
+            }
             for (Field field : detail.fieldsToInject) {
                 field.setAccessible(true);
                 Class<?> clazzToInject = field.getType();
                 field.set(instance, getBean(clazzToInject));
-            }
-            if (detail.beanScope == BeanScope.SINGLETON) {
-                beans.put(clazz.getCanonicalName(), instance);
             }
             return instance;
         } catch (Exception e) {
